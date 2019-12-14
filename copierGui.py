@@ -3,6 +3,8 @@ from copier import *
 rowPos = 0
 replacementsGui = []
 
+## read this http://zetcode.com/tkinter/layout/
+
 class ReplacementRowConfig:
     def __init__(self,findVal, replaceVal, folderPath, fileName, inFile, fileExtensions):
         self.findVal = findVal
@@ -24,16 +26,34 @@ lblSrc.grid(column=0, row=rowPos)
 
 txtSrc = Entry(window,width=50)
 txtSrc.grid(column=1, row=rowPos)
-rowPos += 1
+
+def clickedReplace():
+    lastActionVar.set("Replacement")
+    source = txtSrc.get();
+    target = txtTarget.get();
+    if source is not None and source != '':
+        replacements = []
+        for replacementRowConfig in replacementsGui:
+             if replacementRowConfig.findVal is not None and replacementRowConfig.findVal != '' and \
+                replacementRowConfig.replaceVal is not None and replacementRowConfig.replaceVal != '':
+                replacements.append(replacementRowConfig.toReplacement())
+        copierConfig2 = CopierConfig(True,source,target,replacements)
+        performReplacement(copierConfig2);
+    else :
+        print("Nothing set")
+
+btn = Button(window, text="Replace", command=clickedReplace)
+btn.grid(column=2, row=rowPos)
+rowPos +=1
 
 lblTarget = Label(window, text="Target")
 lblTarget.grid(column=0, row=rowPos)
 
 txtTarget = Entry(window,width=50)
 txtTarget.grid(column=1, row=rowPos)
-rowPos +=1
+
  
-def clicked():
+def clickedCopy():
     lastActionVar.set("Clicked")
     source = txtSrc.get();
     target = txtTarget.get();
@@ -48,14 +68,16 @@ def clicked():
         performCopy(copierConfig2);
     else :
         print("Nothing set")
+
+btn = Button(window, text="Copy", command=clickedCopy)
+btn.grid(column=2, row=rowPos)
+rowPos +=1
         
 lastActionVar = StringVar(window, value="Last Action")
 lastAction = Label(window, textvariable=lastActionVar)
 lastAction.grid(column=1, row=rowPos)
- 
-btn = Button(window, text="Copy", command=clicked)
-btn.grid(column=2, row=rowPos)
-rowPos +=1
+rowPos +=1 
+
 
 ## replacements
 temp = Label(window, text="Find")
@@ -76,7 +98,7 @@ temp.grid(column=4, row=rowPos)
 temp = Label(window, text="File Extensions")
 temp.grid(column=5, row=rowPos)
 
-def addReplacement():
+def addReplacement(val):
     global rowPos
     rowPos+=1
     ## build a new row, add it to the ui
@@ -101,12 +123,21 @@ def addReplacement():
     inFile.invoke()
     inFile.grid(column=4, row=rowPos)
 
-    v = StringVar(window, value='.java,pom.xml')
+    v = StringVar(window, value=val)
     fileExtensions = Entry(window,width=12, textvariable=v)
     fileExtensions.grid(column=5, row=rowPos)
     replacementsGui.append(ReplacementRowConfig(findVal, replaceVal, folderPathBoolean, fileNameBoolean, inFileBoolean, fileExtensions))
 
-addReplacementButton = Button(window, text="Add", command=addReplacement)
+def addJava():
+    addReplacement('.java,pom.xml')
+
+def addAng():
+    addReplacement('.ts,.html,.css,.scss')
+
+addReplacementButton = Button(window, text="AddJava", command=addJava)
 addReplacementButton.grid(column=6, row=rowPos)
+
+addReplacementButton = Button(window, text="AddAng", command=addAng)
+addReplacementButton.grid(column=7, row=rowPos)
  
 window.mainloop()

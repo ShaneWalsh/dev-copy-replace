@@ -114,8 +114,15 @@ def performCopy(copierConfig):
     
     ## maybe run a secondary process on the folders by walking the directory structure and updating them all.
     customFolderUpdate(copierConfig, copierConfig.target)
-    
     log(True, "Process Complete")
+
+def performReplacement(copierConfig):
+    if not os.path.isdir(copierConfig.source):
+        print('Source dir does not exist')
+    else :
+        log(True, "Starting replacement in "+copierConfig.source)
+        customFolderUpdate(copierConfig, copierConfig.source)
+        log(True, "Process Complete")
     
 ## todo handle error for file already existing and remove it.
 
