@@ -1,6 +1,7 @@
 from copier import *
+from replacment import *
 
-from tkinter import Tk, Text, TOP, BOTH, X, N, LEFT, RIGHT
+from tkinter import Tk, Text, TOP, BOTH, X, Y, N, LEFT, RIGHT
 from tkinter.ttk import Frame, Label, Entry
 
 rowPos = 0
@@ -9,6 +10,8 @@ replacementsFrame = NONE
 
 txtTarget = NONE
 txtSrc = NONE
+operationSrc = NONE
+operationRes = NONE
 rootMain = NONE
 app = NONE
 textVariables = []
@@ -113,6 +116,8 @@ class Example(Frame):
         global replacementsFrame
         global txtSrc
         global txtTarget
+        global operationSrc
+        global operationRes
         self.master.title("Copier to make life easier")
         self.pack(fill=BOTH, expand=True)
 
@@ -130,7 +135,7 @@ class Example(Frame):
         lblSrc = Label(sourceFrame, text="Source", width=6)
         lblSrc.pack(side=LEFT, padx=5, pady=5,anchor=N)
         
-        btn = Button(sourceFrame, text="Replace", command=clickedReplace)
+        btn = Button(sourceFrame, text="RunJustReplace", command=clickedReplace)
         btn.pack(side=RIGHT, padx=5, pady=5, anchor=N)
         
         txtSrc = Entry(sourceFrame)
@@ -143,7 +148,7 @@ class Example(Frame):
         lblTarget = Label(targetFrame, text="Target")
         lblTarget.pack(side=LEFT, padx=5, pady=5,anchor=N)
 
-        btn = Button(targetFrame, text="Copy", command=clickedCopy)
+        btn = Button(targetFrame, text="CopyAndReplace", command=clickedCopy)
         btn.pack(side=RIGHT, padx=5, pady=5, anchor=N)
 
         txtTarget = Entry(targetFrame,width=50)
@@ -177,20 +182,46 @@ class Example(Frame):
         addReplacementButton.pack(side=LEFT, padx=5, pady=5,anchor=N)
 
         replacementsFrame = Frame(self)
-        replacementsFrame.pack(fill=BOTH, expand=True)
+        replacementsFrame.pack(fill=X, expand=True)
 
-        targetFrame2 = Frame(self)
-        targetFrame2.pack(fill=X)
-        
-        lblTarget2 = Label(targetFrame2, text="Target")
-        lblTarget2.pack(side=LEFT, padx=5, pady=5,anchor=N)
+        ## OPERATIONS  
+        operationsFrame2 = Frame(self)
+        operationsFrame2.pack(fill=X)
+
+        operationSrc = Text(operationsFrame2, width=40)
+        operationSrc.pack(side=LEFT, padx=5)
+
+        opButtonFrame = Frame(operationsFrame2)
+        opButtonFrame.pack(side=LEFT, fill=Y, expand=True)
+
+        dashToCC = Button(opButtonFrame, text="dashToCC", command=cleanCamelCaseBtn)
+        dashToCC.pack(padx=5, pady=5)
+
+        ccToDashButton = Button(opButtonFrame, text="cCToDash", command=camelCaseToDashBtn)
+        ccToDashButton.pack(padx=5, pady=5)
+
+        operationRes = Text(operationsFrame2, width=40)
+        operationRes.pack(side=RIGHT, padx=5)
+
+## Operation handlers for the buttons
+def cleanCamelCaseBtn():
+    inputValue=operationSrc.get("1.0","end-1c")
+    outputValue = cleanCamelCase(inputValue)
+    operationRes.delete("1.0", 'end')
+    operationRes.insert("1.0", outputValue)
+
+def camelCaseToDashBtn():
+    inputValue=operationSrc.get("1.0","end-1c")
+    outputValue = camelCaseToDash(inputValue)
+    operationRes.delete("1.0", 'end')
+    operationRes.insert("1.0", outputValue)
 
 def main():
     global rootMain
     global app
     root = Tk()
     rootMain = root
-    root.geometry('750x200')
+    root.geometry('750x400')
     app = Example()
     root.mainloop()
 
@@ -198,3 +229,4 @@ if __name__ == '__main__':
     main()
 
 ##window.mainloop()
+
